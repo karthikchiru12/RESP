@@ -11,16 +11,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
 public class Parser {
 
-    private static Logger logger = LoggerFactory.getLogger(Parser.class);
+    private static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
-    private List<String> dataStore;
+    private final List<String> dataStore;
 
-    private JSONArray parsedTree = new JSONArray();
+    private final JSONArray parsedTree = new JSONArray();
     private int currentParseIndex = 0;
 
     private String stringData;
@@ -39,20 +40,16 @@ public class Parser {
     }
 
     public static void main(String[] args) {
-        String test = "*2\r\n$5\r\nHello\r\n$5\r\nworld\r\n";
-        String test1 = "$-1\r\n";
-        String test2 = "$-1\r\n\r\n";
-        String test3 = "+PONG\r\n\r\n";
-        String test4 = "+PONG\r\n";
-        String test5 = "+\r\n";
-        String test6 = "$2\r\nHe";
-        String test7 = "$2\r\nHello";
-        String test8 = "$\r\nHello";
-        String test9 = "$5\r\nHello";
-        String test10 = "$5\r\nworld\r\nWORLD\r\n";
-        String test11 = "+PING\r\n+PING\r\n";
-        Parser parser = new Parser(test11);
-        System.out.println(parser.parse());
+        List<String> tests = new ArrayList<String>(Arrays.asList("*2\r\n$5\r\nHello\r\n$5\r\nworld\r\n","*3\r\n$5\r\nPINGO\r\n$5\r\nPongo\r\n-Hello",
+        "$-1\r\n", "$-1\r\n\r\n", "+PONG\r\n\r\n", "+PONG\r\n", "+\r\n", "$2\r\nHe", "$2\r\nHello", "$\r\nHello", "$5\r\nHello", "$5\r\nworld\r\nWORLD\r\n", "+PING\r\n+PING\r\n", ":4848\r\n"));
+        for(String test : tests)
+        {
+            Parser parser = new Parser(test);
+            System.out.println("TEST : "+test);
+            System.out.println("RESULT : " + parser.parse());
+            System.out.println("#########$$$$$$$$$$$$$$$$$\n");
+
+        }
 
     }
 
@@ -85,26 +82,36 @@ public class Parser {
         return null;
     }
 
+    private JSONObject parseData() {
+        try {
+            String token = this.dataStore.get(this.currentParseIndex);
+
+            if (token.startsWith(ParserConstants.SIMPLE_STRING)) {
+                return this.parseSimpleString();
+            } else if (token.startsWith(ParserConstants.BULK_STRING)) {
+                return this.parseBulkString();
+            } else if (token.startsWith(ParserConstants.INTEGER)) {
+                return this.parseInteger();
+            } else if (token.startsWith(ParserConstants.ERROR_STRING)) {
+                return this.parseErrorString();
+            } else if (token.startsWith(ParserConstants.ARRAY)) {
+                return this.parseArray();
+            }
+        } catch (Exception exception) {
+            logger.error("Exception occurred : ", exception);
+        }
+        return null;
+    }
+
     public JSONArray parse() {
 
         while (this.currentParseIndex < this.dataStore.size()) {
-            try {
-                String token = this.dataStore.get(this.currentParseIndex);
-
-                if (token.startsWith(ParserConstants.SIMPLE_STRING)) {
-                    parseSimpleString();
-                } else if (token.startsWith(ParserConstants.BULK_STRING)) {
-                    parseBulkString();
-                }
-                else
-                {
-                    break;
-                }
-            } catch (Exception exception) {
-                this.currentParseIndex = this.dataStore.size();
-                logger.error("Exception occurred : ", exception);
+            JSONObject data = this.parseData();
+            if(data!=null)
+            {
+                this.parsedTree.put(data);
             }
-
+            this.currentParseIndex++;
         }
 
         return this.parsedTree;
@@ -117,18 +124,37 @@ public class Parser {
                 .put("length", length);
     }
 
-    private void parseSimpleString() {
+    private JSONObject parseSimpleString() {
         String token = this.dataStore.get(this.currentParseIndex);
         if (!token.isEmpty()) {
             String simpleString = token.substring(1);
-            this.parsedTree.put(this.buildParsedTreeItem("SIMPLE_STRING", simpleString, String.valueOf(simpleString.length())));
+            return this.buildParsedTreeItem("SIMPLE_STRING", simpleString, String.valueOf(simpleString.length()));
         } else {
-            this.parsedTree.put(this.buildParsedTreeItem("SIMPLE_STRING", "", "0"));
+            return this.buildParsedTreeItem("SIMPLE_STRING", "", "0");
         }
-        this.currentParseIndex++;
     }
 
-    private void parseBulkString() {
+    private JSONObject parseErrorString() {
+        String token = this.dataStore.get(this.currentParseIndex);
+        if (!token.isEmpty()) {
+            String errorString = token.substring(1);
+            return this.buildParsedTreeItem("ERROR_STRING", errorString, String.valueOf(errorString.length()));
+        } else {
+            return this.buildParsedTreeItem("ERROR_STRING", "", "0");
+        }
+    }
+
+    private JSONObject parseInteger() {
+        String token = this.dataStore.get(this.currentParseIndex);
+        if (!token.isEmpty()) {
+            String number = token.substring(1);
+            return this.buildParsedTreeItem("INTEGER", number, number);
+        } else {
+            return this.buildParsedTreeItem("INTEGER", "0", "0");
+        }
+    }
+
+    private JSONObject parseBulkString() {
         String token = this.dataStore.get(this.currentParseIndex);
         if (token.length() >= 2) {
             int bulkStringLength = Integer.parseInt(token.substring(1));
@@ -138,17 +164,40 @@ public class Parser {
                 if (bulkStringLength != bulkString.length()) {
                     throw new IllegalStateException(String.format("The bulk string length defined i.e $%d and actual provided string length does not match i.e %s : %d", bulkStringLength, bulkString, bulkString.length()));
                 } else {
-                    this.parsedTree.put(this.buildParsedTreeItem("BULK_STRING", bulkString, String.valueOf(bulkStringLength)));
+                    return this.buildParsedTreeItem("BULK_STRING", bulkString, String.valueOf(bulkStringLength));
                 }
             } else {
-                this.parsedTree.put(this.buildParsedTreeItem("BULK_STRING", "", String.valueOf(bulkStringLength)));
+                return this.buildParsedTreeItem("BULK_STRING", "", String.valueOf(bulkStringLength));
             }
         } else {
             throw new IllegalStateException(String.format("The bulk string length is not defined i.e %s", token));
         }
+    }
 
-        this.currentParseIndex++;
+    private JSONObject parseArray() {
+        String token = this.dataStore.get(this.currentParseIndex);
+        if (!token.isEmpty()) {
+            int number = Integer.parseInt(token.substring(1));
+            if (number > 0) {
+                this.currentParseIndex++;
+                List<JSONObject> arrayItems = new ArrayList<>();
+                int idx = 1;
+                while (idx <= number) {
+                    arrayItems.add(this.parseData());
+                    this.currentParseIndex++;
+                    idx++;
+                }
+                if (idx <= number) {
+                    throw new IllegalStateException(String.format("The number of items declared v/s present does not match i.e %s", token));
+                } else {
+                    return this.buildParsedTreeItem("ARRAY", arrayItems, String.valueOf(arrayItems.size()));
+                }
 
+            }
+            return this.buildParsedTreeItem("ARRAY", new ArrayList<JSONObject>(), String.valueOf(number));
+        } else {
+            return this.buildParsedTreeItem("ARRAY", new ArrayList<JSONObject>(), "0");
+        }
     }
 
 }
