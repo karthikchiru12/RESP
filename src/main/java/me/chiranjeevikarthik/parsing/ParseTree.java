@@ -1,4 +1,4 @@
-package parsing;
+package me.chiranjeevikarthik.parsing;
 
 public class ParseTree<T> {
 
