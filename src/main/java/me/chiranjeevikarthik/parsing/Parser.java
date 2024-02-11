@@ -313,10 +313,10 @@ public class Parser {
             } else if (number < 0) {
                 return this.buildParsedTreeItem("NULL", "_", "0");
             } else {
-                return this.buildParsedTreeItem("SET", new ArrayList<JSONObject>(), String.valueOf(number));
+                return this.buildParsedTreeItem("SET", new HashSet<JSONObject>(), String.valueOf(number));
             }
         } else {
-            return this.buildParsedTreeItem("SET", new ArrayList<JSONObject>(), "0");
+            return this.buildParsedTreeItem("SET", new HashSet<JSONObject>(), "0");
         }
     }
 
