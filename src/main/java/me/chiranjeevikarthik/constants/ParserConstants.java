@@ -13,4 +13,10 @@ public class ParserConstants {
     public static final String BOOLEAN = "#";
     public static final String BIG_NUMBER = "(";
     public static final String SET = "~";
+    public static final String VERBATIM_STRING = "=";
+    public static final String MAP = "%";
+    public static final String VALUE = "value";
+    public static final String TYPE = "type";
+    public static final String LENGTH = "length";
+
 }
