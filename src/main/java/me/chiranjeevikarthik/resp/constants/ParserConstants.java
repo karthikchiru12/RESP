@@ -1,4 +1,4 @@
-package me.chiranjeevikarthik.constants;
+package me.chiranjeevikarthik.resp.constants;
 
 public class ParserConstants {
 

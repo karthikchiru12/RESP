@@ -1,7 +1,7 @@
-package me.chiranjeevikarthik.encoding;
+package me.chiranjeevikarthik.resp.encoding;
 
-import me.chiranjeevikarthik.constants.EncodingConstants;
-import me.chiranjeevikarthik.constants.ParserConstants;
+import me.chiranjeevikarthik.resp.constants.EncodingConstants;
+import me.chiranjeevikarthik.resp.constants.ParserConstants;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -28,39 +28,6 @@ public class Encoder {
 
     public Encoder(JSONArray jsonArray) {
         this.parsedArray = jsonArray;
-    }
-
-    public static void main(String[] args) {
-        List<String> tests = new ArrayList<>(Arrays.asList("[{\"length\":\"2\",\"type\":\"ARRAY\",\"value\":[{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"Hello\"},{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"world\"}]}]",
-                "[{\"length\":\"3\",\"type\":\"ARRAY\",\"value\":[{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"PINGO\"},{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"Pongo\"},{\"length\":\"5\",\"type\":\"ERROR_STRING\",\"value\":\"Hello\"}]}]",
-                "[{\"length\":\"0\",\"type\":\"NULL\",\"value\":\"BULK_STRING\"}]",
-                "[{\"length\":\"4\",\"type\":\"SIMPLE_STRING\",\"value\":\"PONG\"}]",
-                "[{\"length\":\"0\",\"type\":\"SIMPLE_STRING\",\"value\":\"\"}]",
-                "[{\"length\":\"2\",\"type\":\"BULK_STRING\",\"value\":\"He\"}]",
-                "[{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"Hello\"}]",
-                "[{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"world\"}]",
-                "[{\"length\":\"4\",\"type\":\"SIMPLE_STRING\",\"value\":\"PING\"},{\"length\":\"4\",\"type\":\"SIMPLE_STRING\",\"value\":\"PING\"}]",
-                "[{\"length\":\"NA\",\"type\":\"INTEGER\",\"value\":4848}]",
-                "[{\"length\":\"NA\",\"type\":\"DOUBLE\",\"value\":4.0121}]",
-                "[{\"length\":\"21\",\"type\":\"BLOB_ERROR\",\"value\":\"SYNTAX invalid syntax\"}]",
-                "[{\"length\":\"1\",\"type\":\"BOOLEAN_TYPE\",\"value\":true}]",
-                "[{\"length\":\"1\",\"type\":\"BOOLEAN_TYPE\",\"value\":false}]",
-                "[{\"length\":\"3\",\"type\":\"ARRAY\",\"value\":[{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"Hello\"},{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"world\"},{\"length\":\"1\",\"type\":\"BOOLEAN_TYPE\",\"value\":true}]}]",
-                "[{\"length\":\"NA\",\"type\":\"BIG_NUMBER\",\"value\":12345678901234556777888224433434}]",
-                "[{\"length\":\"0\",\"type\":\"BIG_NUMBER\",\"value\":\"0\"}]",
-                "[{\"length\":\"2\",\"type\":\"ARRAY\",\"value\":[{\"length\":\"5\",\"type\":\"SIMPLE_STRING\",\"value\":\"Hello\"},{\"length\":\"5\",\"type\":\"ERROR_STRING\",\"value\":\"World\"}]}]",
-                "[{\"length\":\"3\",\"type\":\"SET\",\"value\":[{\"length\":\"1\",\"type\":\"BOOLEAN_TYPE\",\"value\":true},{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"world\"},{\"length\":\"5\",\"type\":\"BULK_STRING\",\"value\":\"Hello\"}]}]",
-                "[{\"length\":\"2\",\"type\":\"ARRAY\",\"value\":[{\"length\":\"5\",\"type\":\"SIMPLE_STRING\",\"value\":\"Hello\"},{\"length\":\"2\",\"type\":\"ARRAY\",\"value\":[{\"length\":\"5\",\"type\":\"SIMPLE_STRING\",\"value\":\"Hello\"},{\"length\":\"5\",\"type\":\"ERROR_STRING\",\"value\":\"World\"}]}]}]",
-                "[{\"length\":\"5\",\"type\":\"VERBATIM_STRING\",\"value\":\"Hello\"}]",
-                "[{\"length\":\"2\",\"type\":\"MAP\",\"value\":{\"{\\\"length\\\":\\\"6\\\",\\\"type\\\":\\\"SIMPLE_STRING\\\",\\\"value\\\":\\\"second\\\"}\":{\"length\":\"NA\",\"type\":\"INTEGER\",\"value\":2},\"{\\\"length\\\":\\\"5\\\",\\\"type\\\":\\\"SIMPLE_STRING\\\",\\\"value\\\":\\\"first\\\"}\":{\"length\":\"NA\",\"type\":\"INTEGER\",\"value\":1}}}]",
-                "[{\"length\":\"2\",\"type\":\"MAP\",\"value\":{\"{\\\"length\\\":\\\"6\\\",\\\"type\\\":\\\"SIMPLE_STRING\\\",\\\"value\\\":\\\"second\\\"}\":{\"length\":\"2\",\"type\":\"ARRAY\",\"value\":[{\"length\":\"5\",\"type\":\"SIMPLE_STRING\",\"value\":\"Hello\"},{\"length\":\"5\",\"type\":\"ERROR_STRING\",\"value\":\"World\"}]},\"{\\\"length\\\":\\\"5\\\",\\\"type\\\":\\\"SIMPLE_STRING\\\",\\\"value\\\":\\\"first\\\"}\":{\"length\":\"NA\",\"type\":\"INTEGER\",\"value\":1}}}]"));
-        for (String test : tests) {
-            Encoder encoder = new Encoder(new JSONArray(test));
-            System.out.println("TEST : " + test);
-            System.out.println("RESULT : " + encoder.encode().replaceAll("\r\n", "\\\\r\\\\n"));
-            System.out.println("#########$$$$$$$$$$$$$$$$$\n");
-
-        }
     }
 
     public String encode() {

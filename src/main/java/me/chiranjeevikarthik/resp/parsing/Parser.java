@@ -1,7 +1,7 @@
-package me.chiranjeevikarthik.parsing;
+package me.chiranjeevikarthik.resp.parsing;
 
-import me.chiranjeevikarthik.constants.EncodingConstants;
-import me.chiranjeevikarthik.constants.ParserConstants;
+import me.chiranjeevikarthik.resp.constants.EncodingConstants;
+import me.chiranjeevikarthik.resp.constants.ParserConstants;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -37,25 +37,6 @@ public class Parser {
     public Parser(InputStream inputStream) {
         this.inputStream = inputStream;
         this.dataStore = this.readAndFormatInputStream();
-    }
-
-    public static void main(String[] args) {
-        List<String> tests = new ArrayList<>(Arrays.asList("*2\r\n$5\r\nHello\r\n$5\r\nworld\r\n", "*3\r\n$5\r\nPINGO\r\n$5\r\nPongo\r\n-Hello",
-                "$-1\r\n", "$-1\r\n\r\n", "+PONG\r\n\r\n", "+PONG\r\n", "+\r\n", "$2\r\nHe", "$2\r\nHello", "$\r\nHello", "$5\r\nHello", "$5\r\nworld\r\nWORLD\r\n", "+PING\r\n+PING\r\n", ":4848\r\n", ",4.0121\r\n",
-                "!21\r\nSYNTAX invalid syntax\r\n", "#t\r\n", "#f\r\n", "#\r\n", "*3\r\n$5\r\nHello\r\n$5\r\nworld\r\n#t\r\n",
-                "(12345678901234556777888224433434\r\n", "(\r\n", "*2\r\n+Hello", "*2\r\n+Hello\r\n-World", "~3\r\n$5\r\nHello\r\n$5\r\nworld\r\n#t\r\n",
-                "*2\r\n+Hello\r\n*2\r\n+Hello\r\n-World", "=5\r\nHello", "=5\r\nHell", "%2\r\n+first\r\n:1\r\n+second\r\n:2\r\n",
-                "%2\r\n+first\r\n:1\r\n+second", "%2\r\n+first\r\n:1\r\n+second\r\n*2\r\n+Hello\r\n-World",
-                "%2\r\n+first\r\n:1\r\n*2\r\n+Hello\r\n-World\r\n+VALUE", "%2\r\n+first\r\n:1",
-                "%2\r\n+first\r\n:1\r\n+second\r\n*2\r\n+Hello\r\n+World"));
-        for (String test : tests) {
-            Parser parser = new Parser(test);
-            System.out.println("TEST : " + test.replaceAll("\r\n", "\\\\r\\\\n"));
-            System.out.println("RESULT : " + parser.parse());
-            System.out.println("#########$$$$$$$$$$$$$$$$$\n");
-
-        }
-
     }
 
     private List<String> formatStringData() {
