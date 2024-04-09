@@ -11,7 +11,7 @@ You can use package in your project by adding below maven dependency.
 <dependency>
     <groupId>me.chiranjeevikarthik.resp</groupId>
     <artifactId>RESP</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
