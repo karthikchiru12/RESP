@@ -1,6 +1,6 @@
 # RESP
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/karthikchiru12/RESP/blob/master/LICENSE)  ![RESP :1.0](https://img.shields.io/badge/Version-v1.0-blue)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/karthikchiru12/RESP/blob/master/LICENSE)  ![RESP :1.1](https://img.shields.io/badge/Version-v1.1-blue)
 
 
 An implementation of RESP(Redis Serialization Protocol) for learning and for fun.
